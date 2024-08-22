@@ -1,15 +1,16 @@
 import os
 import asyncio
-from kaspi import Kaspi
+from demping.management.commands.kaspi import Kaspi
 from aiogram import Bot
 from concurrent.futures import ThreadPoolExecutor
 from dotenv import load_dotenv
 import time
 from bs4 import BeautifulSoup
+from django.core.management.base import BaseCommand
 import requests
 import json
 from selenium.webdriver.common.by import By
-from whatsapp import send_whatsapp_message
+from demping.management.commands.whatsapp import send_whatsapp_message
 
 
 load_dotenv()
@@ -104,14 +105,14 @@ async def process_orders():
         await send_message(f'#заказ {order_number}\n\nНовый заказ!\n\n{name}\n\n{",".join(numbered_list)}\n\n{phone_numbers[0]}\n\nТип доставки - {delivery_type}\n\nПланируемая дата доставки - {pref_date}\n\nАдрес доставки - {city}',type='bug')
         await send_message(str(e), type='bug')
         
-async def main():
-    await process_orders()
 
-if __name__ == '__main__':
-    while 1:
-        loop = asyncio.get_event_loop()
-        try:
-            loop.run_until_complete(main())
-        finally:
-            loop.run_until_complete(loop.shutdown_asyncgens())
-            loop.close()
+
+
+class Command(BaseCommand):
+    help = 'orders'
+    def handle(self, *args, **kwargs):
+        while 1:
+            loop = asyncio.get_event_loop()
+            async def accept_orders():
+                await process_orders()
+            loop.run_until_complete(accept_orders())

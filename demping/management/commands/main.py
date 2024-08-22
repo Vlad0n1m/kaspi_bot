@@ -7,6 +7,8 @@ from django.db import models
 from django.utils.decorators import sync_and_async_middleware
 from asgiref.sync import sync_to_async
 import logging
+from demping.models import Product
+from demping.management.commands.kaspi import Kaspi
 
 logger = logging.getLogger('django')
 
@@ -14,10 +16,6 @@ BOT_TOKEN = os.getenv('TELEGRAM_TOKEN')
 GROUP_CHAT_ID = os.getenv('GROUP_CHAT_ID')
 
 bot = Bot(token=BOT_TOKEN)
-
-# Ensure you have the right imports for your models and Kaspi class
-from demping.models import Product
-from demping.management.commands.kaspi import Kaspi
 
 async def change_price(i, kaspi, product, info, new_price, reason):
     if new_price == -333:
@@ -83,7 +81,7 @@ async def demp2(i, product, kaspi):
         await change_price(i, kaspi, product, [], new_price, reason)
 
 class Command(BaseCommand):
-    help = 'Updates product prices'
+    help = 'demping'
 
     def handle(self, *args, **kwargs):
         loop = asyncio.get_event_loop()
