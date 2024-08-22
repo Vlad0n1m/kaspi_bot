@@ -1,7 +1,9 @@
 import requests
 from datetime import datetime
 import pytz
-import re
+import re, os
+from dotenv import load_dotenv
+load_dotenv()
 
 def format_phone_number(phone_number):
     digits_only = re.sub(r'\D', '', phone_number)
@@ -101,7 +103,11 @@ def generate_message(order_number, customer_name, items_list, delivery_date, del
     return message
 
 def send_whatsapp_message(phone_number, client_name, products, pref_date, order_number, delivery_type, city):
-    url = "https://7103.api.greenapi.com/waInstance7103101336/sendMessage/19da3d70ba674ea8aaaa3925ad4f9bbd5fbe1d54ef58455092"
+    API_URL = os.getenv('API_URL')
+    ID_INSTANCE = os.getenv('ID_INSTANCE')
+    API_TOKEN_INSTANCE = os.getenv('API_TOKEN_INSTANCE')
+
+    url = f"{API_URL}waInstance{ID_INSTANCE}/sendMessage/{API_TOKEN_INSTANCE}"
     headers = {
         'Content-Type': 'application/json'
     }
